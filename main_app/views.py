@@ -4,15 +4,27 @@ from .forms import LoginForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm
 from .models import Skill
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
+
+class SkillCreate(CreateView):
+    model = Skill
+    fields = '__all__'
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        self.object.user = self.request.user
+        self.object.save()
+        return HttpResponseRedirect('/skills/')
 
 def index(request):
   return render(request, 'index.html')
 
 def login_view(request):
     if request.method == 'POST':
-        # if post, then authenticate (user submitted username and password)
         form = LoginForm(request.POST)
         if form.is_valid():
             u = form.cleaned_data['username']
@@ -56,3 +68,4 @@ def skills_index(request):
 def skills_detail(request, skill_id):
     skill = Skill.objects.get(id=skill_id)
     return render(request, 'skills/detail.html', { 'skill': skill })
+

@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User 
+from django.urls import reverse
 
 class Skill(models.Model):
     name = models.CharField(max_length=100)
@@ -10,5 +11,8 @@ class Skill(models.Model):
     def __str__(self):
         return self.name
 
+    def get_absolute_url(self):
+        return reverse('skill_list')
 
-    
+   
+        
